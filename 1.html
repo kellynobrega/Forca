@@ -170,7 +170,7 @@
       },
       {
         palavra: "manga",
-        dica: "Fruta doce"
+        dica: "Fruta doce e amarela"
       },
       {
         palavra: "melancia",
@@ -221,6 +221,22 @@
         palavra: "coelho",
         dica: "Gosta de cenoura"
       },
+      {
+        palavra: "leão",
+        dica: "Rei da selva"
+      },
+      {
+        palavra: "macaco",
+        dica: "Gosta de comer banana"
+      },
+      {
+        palavra: "urso",
+        dica: "Gosta de comer mel"
+      },
+      {
+        palavra: "elefante",
+        dica: "Tem patas grande e um tromba gigante"
+      },
     ];
 
     let palavrasDisponiveis = [];
@@ -261,7 +277,7 @@
       letrasEl.innerHTML = "";
       telaFinal.style.display = "none";
 
-      const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZÃÇ";
       for (let letra of alfabeto) {
         const btn = document.createElement("div");
         btn.className = "letra";
@@ -318,4 +334,5 @@
 </body>
 
 </html>
+
 
