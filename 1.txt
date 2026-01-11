@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Forca</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8bbd0;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #e91e63;
+    }
+
+    #dica {
+      font-size: 1.2em;
+      color: #f06292;
+      font-style: italic;
+    }
+
+    #forca img {
+      width: 200px;
+      margin: 15px 0;
+    }
+
+    #palavra {
+      font-size: 2.5em;
+      letter-spacing: 0.3em;
+      margin: 20px 0;
+      color: #e91e63;
+    }
+
+    .letra {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      border: 2px solid #f48fb1;
+      border-radius: 8px;
+      line-height: 40px;
+      cursor: pointer;
+      font-weight: bold;
+      background-color: #fce4ec;
+    }
+
+    .letra.certa {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .letra.errada {
+      background-color: #e53935;
+      color: white;
+    }
+
+    /* TELA PRETA */
+    #telaFinal {
+      position: fixed;
+      inset: 0;
+      background: black;
+      color: white;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      z-index: 999;
+    }
+
+    #telaFinal button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 0.5em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #e91e63;
+      color: white;
+    }
+
+    #telaFinal button:hover {
+      background-color: #c2185b;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Jogo da Forca</h1>
+
+  <div id="dica"></div>
+
+  <div id="forca">
+    <img id="imagemForca" src="https://i.postimg.cc/vHybmM18/1.jpg" alt="Imagem da Forca">
+  </div>
+
+  <div id="palavra"></div>
+  <div id="letras"></div>
+
+  <div id="telaFinal">
+    <div id="textoFinal"></div>
+    <button id="botaoFinal"></button>
+  </div>
+
+  <audio id="correctSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+  <audio id="wrongSound" src="https://raw.githubusercontent.com/kellynobrega/Musica/main/Erro.mp3" preload="auto"></audio>
+  <audio id="applauseSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3" preload="auto"></audio>
+  <audio id="gameOverSound" src="https://raw.githubusercontent.com/kellynobrega/Musica/main/Som%20de%20falha.mp3" preload="auto"></audio>
+
+  <script>
+    /* 🔹 IMAGENS DA FORCA */
+    const imagensForca = [
+      "https://i.postimg.cc/vHybmM18/1.jpg",
+      "https://i.postimg.cc/KzLhZsxb/2.jpg",
+      "https://i.postimg.cc/kGm3DFgf/3.jpg",
+      "https://i.postimg.cc/nV4fg5dx/4.jpg",
+      "https://i.postimg.cc/x1FwLSdQ/5.jpg",
+      "https://i.postimg.cc/bv74FHkh/6.jpg",
+      "https://i.postimg.cc/J4pvWWZS/7.jpg"
+    ];
+
+    /* 🔹 PALAVRAS */
+    const todasPalavras = [{
+        palavra: "vermelho",
+        dica: "Cor primária"
+      },
+      {
+        palavra: "azul",
+        dica: "Cor primária"
+      },
+      {
+        palavra: "amarelo",
+        dica: "Cor primária"
+      },
+      {
+        palavra: "verde",
+        dica: "Mistura de azul e amarelo"
+      },
+      {
+        palavra: "laranja",
+        dica: "Mistura de vermelho e amarelo"
+      },
+      {
+        palavra: "roxo",
+        dica: "Mistura de azul e vermelho"
+      },
+
+      {
+        palavra: "banana",
+        dica: "Fruta amarela"
+      },
+      {
+        palavra: "maçã",
+        dica: "Fruta vermelha"
+      },
+      {
+        palavra: "uva",
+        dica: "Fruta em cachos"
+      },
+      {
+        palavra: "pera",
+        dica: "Fruta verde"
+      },
+      {
+        palavra: "manga",
+        dica: "Fruta doce"
+      },
+      {
+        palavra: "melancia",
+        dica: "Fruta grande"
+      },
+      {
+        palavra: "morango",
+        dica: "Fruta pequena e vermelha"
+      },
+      {
+        palavra: "abacaxi",
+        dica: "Fruta com coroa"
+      },
+
+      {
+        palavra: "cachorro",
+        dica: "Amigo do homem"
+      },
+      {
+        palavra: "gato",
+        dica: "Animal que mia"
+      },
+      {
+        palavra: "vaca",
+        dica: "Dá leite"
+      },
+      {
+        palavra: "cavalo",
+        dica: "Corre rápido"
+      },
+      {
+        palavra: "porco",
+        dica: "Animal da fazenda"
+      },
+      {
+        palavra: "galinha",
+        dica: "Bota ovos"
+      },
+      {
+        palavra: "pato",
+        dica: "Nada"
+      },
+      {
+        palavra: "ovelha",
+        dica: "Tem lã"
+      },
+      {
+        palavra: "coelho",
+        dica: "Gosta de cenoura"
+      },
+    ];
+
+    let palavrasDisponiveis = [];
+    let palavraSecreta = "";
+    let palavraExibida = "";
+    let erros = 0;
+    let letrasUsadas = [];
+
+    const palavraEl = document.getElementById("palavra");
+    const letrasEl = document.getElementById("letras");
+    const dicaEl = document.getElementById("dica");
+    const imagemForca = document.getElementById("imagemForca");
+    const telaFinal = document.getElementById("telaFinal");
+    const textoFinal = document.getElementById("textoFinal");
+    const botaoFinal = document.getElementById("botaoFinal");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+    const applauseSound = document.getElementById("applauseSound");
+    const gameOverSound = document.getElementById("gameOverSound");
+
+    function iniciarJogo() {
+      if (palavrasDisponiveis.length === 0) {
+        palavrasDisponiveis = [...todasPalavras];
+      }
+
+      const index = Math.floor(Math.random() * palavrasDisponiveis.length);
+      const sorteada = palavrasDisponiveis.splice(index, 1)[0];
+
+      palavraSecreta = sorteada.palavra;
+      palavraExibida = "_".repeat(palavraSecreta.length);
+      erros = 0;
+      letrasUsadas = [];
+
+      dicaEl.textContent = "Dica: " + sorteada.dica;
+      palavraEl.textContent = palavraExibida;
+      imagemForca.src = imagensForca[0];
+
+      letrasEl.innerHTML = "";
+      telaFinal.style.display = "none";
+
+      const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for (let letra of alfabeto) {
+        const btn = document.createElement("div");
+        btn.className = "letra";
+        btn.textContent = letra;
+        btn.onclick = () => tentarLetra(letra, btn);
+        letrasEl.appendChild(btn);
+      }
+    }
+
+    function tentarLetra(letra, botao) {
+      if (letrasUsadas.includes(letra)) return;
+      letrasUsadas.push(letra);
+      botao.style.pointerEvents = "none";
+
+      if (palavraSecreta.includes(letra.toLowerCase())) {
+        botao.classList.add("certa");
+        correctSound.play();
+
+        let nova = "";
+        for (let i = 0; i < palavraSecreta.length; i++) {
+          nova += palavraSecreta[i] === letra.toLowerCase() ?
+            letra.toLowerCase() :
+            palavraExibida[i];
+        }
+        palavraExibida = nova;
+        palavraEl.textContent = palavraExibida;
+      } else {
+        botao.classList.add("errada");
+        wrongSound.play();
+        erros++;
+        imagemForca.src = imagensForca[erros];
+      }
+
+      if (!palavraExibida.includes("_")) {
+        textoFinal.textContent = "🎉 PARABÉNS!";
+        botaoFinal.textContent = "CONTINUAR";
+        telaFinal.style.display = "flex";
+        applauseSound.play();
+        botaoFinal.onclick = iniciarJogo;
+      }
+
+      if (erros === 6) {
+        textoFinal.textContent = "❌ TENTE NOVAMENTE";
+        botaoFinal.textContent = "JOGAR NOVAMENTE";
+        telaFinal.style.display = "flex";
+        gameOverSound.play();
+        botaoFinal.onclick = iniciarJogo;
+      }
+    }
+
+    iniciarJogo();
+  </script>
+
+</body>
+
+</html>
